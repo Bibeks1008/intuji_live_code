@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Weather_forcast" ALTER COLUMN "date" SET DEFAULT CURRENT_TIMESTAMP;

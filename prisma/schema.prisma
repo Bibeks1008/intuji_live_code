@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Locations {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255) @unique
+  latitude  Decimal? @db.Decimal(10, 6)
+  longitude Decimal? @db.Decimal(10, 6)
+
+  Weather_realtime Weather_realtime[]
+  Weather_forcast  Weather_forcast[]
+  Air_quality      Air_quality[]
+}
+
+model Weather_realtime {
+  id          Int      @id @default(autoincrement())
+  temperature Decimal  @db.Decimal(5, 2)
+  condition   String   @db.VarChar(255)
+  humidity    Int
+  wind_speed  Decimal  @db.Decimal(5, 2)
+  updated_at  DateTime @updatedAt @db.Timestamptz(3)
+
+  location_id Int
+  location    Locations @relation(fields: [location_id], references: [id])
+}
+
+model Weather_forcast {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now())
+  min_temp  Decimal  @db.Decimal(5, 2)
+  max_temp  Decimal  @db.Decimal(5, 2)
+  condition String   @db.VarChar(255)
+
+  location_id Int
+  location    Locations @relation(fields: [location_id], references: [id])
+}
+
+model Air_quality {
+  id          Int    @id @default(autoincrement())
+  aqi         Int
+  description String @db.VarChar(255)
+
+  location_id Int
+  location    Locations @relation(fields: [location_id], references: [id])
+}
